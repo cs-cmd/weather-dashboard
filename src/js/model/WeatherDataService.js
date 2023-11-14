@@ -1,61 +1,84 @@
 const weatherDataService = (() => {
-    // create Enum-like structure for handling caller type
-    const CallerType = Object.freeze({
-        Current: 1,
-        Forecast: 2,
-        Astronomy: 3,
-    });
-
     const baseUrl = 'https://api.weatherapi.com/v1';
 
-    const getWeatherJSON = async (queryArg, callerType = CallerType.Current) => {
-        const [ link, formatter ] = formatLinkAndFormatter(queryArg, callerType);
-
+    const getWeatherJSON = async (query, apiSubtype, getLocation = false) => {
+        const link = formatLink(query, apiSubtype);
+        const formatter = resolveFormatter(apiSubtype);
+        
         // error in processing, return
         if (!formatter) {
             console.log(`:: Error: formatter function is undefined or null. ::`);
             return;
         }
-        
-        return Promise.race( [ fetch(link, {mode: 'cors' }), createTimeoutPromise() ] )
-        .then(response => response.json())
-        .then(json => formatter(json));
+
+        console.log(link);
+
+        // return new Promise((resolve, reject) => fetch(link, { mode: 'cors' }))
+        return Promise.race( [ fetch(link, { mode: 'cors' }), createTimeoutPromise() ] )
+        .then(response => {
+            if (response.status !== 200) {
+                throw new Error(response.status);
+            } else {
+                return response.json();
+            }
+        })
+        .then(responseJson => {
+            let jsonData = formatter(responseJson);
+
+            if(getLocation) {
+                let location = formatLocationData(responseJson.location);
+                jsonData = { location, ...jsonData };
+            }
+
+            return jsonData;
+        })
+        .catch(err => console.log(err))
     }
 
     // formats the link 
-    const formatLinkAndFormatter = (query, caller) => {
+    const formatLink = (query, caller) => {
         let ext = '';
-        let formatterFunction = null;
 
-        let apiType = '';
-        switch(caller) {
-            case CallerType.Current:
-                apiType = 'current.json';
+        let key = '3f2e84dd6a2b4533a01145609231311';
+        ext = `${baseUrl}/${caller}.json?key=${key}&q=${query.formatQuery()}`;
+
+        return ext;
+    }
+
+    const resolveFormatter = (apiSubtype) => {
+        let formatterFunction = null;
+        switch(apiSubtype) {
+            case 'current':     
                 formatterFunction = formatCurrentWeatherData;
                 break;
-            case CallerType.Forecast:
-                apiType = 'forecast.json';
+            case 'forecast':
                 formatterFunction = formatForecastData;
                 break;
-            case CallerType.Astronomy:
-                apiType = 'astronomy.json';
+            case 'astronomy':
                 formatterFunction = formatAstronomyData;
                 break;
             default:
-                console.log(`:: Error: no CallerType of type '${caller}'. ::`);
+                console.log(`:: Error: no valid subtype of type '${apiSubtype}'. ::`);
                 return;
         }
-
-        let key = '3f2e84dd6a2b4533a01145609231311';
-        ext = `${baseUrl}/${apiType}?key=${key}&q=${query}`;
-
-        return [ ext, formatterFunction ];
+        return formatterFunction;
     }
 
+    const formatLocationData = (object) => {
+        const { localtime_epoch, ...json } = object; 
+        return json;
+    }
     // formats data for the current day/time
     const formatCurrentWeatherData = (object) => {
+        const currentJson = object.current;
+
         const json = {
-            location: object.location.name,
+            last_updated: currentJson.last_updated,
+            temp_c: currentJson.temp_c,
+            feelslike_c: currentJson.feelslike_c,
+            temp_f: currentJson.temp_f,
+            feelslike_f: currentJson.feelslike_f,
+            condition: {...currentJson.condition},
         };
 
         return json;
@@ -63,6 +86,8 @@ const weatherDataService = (() => {
 
     // formats astronomical data for use
     const formatAstronomyData = (object) => {
+        const astronomyJson = object.astronomy;
+
         const json = {};
 
         return json;
@@ -70,6 +95,8 @@ const weatherDataService = (() => {
 
     // formats forecast data
     const formatForecastData = (object) => {
+        const forecastJson = object.forecast;
+
         const json = {};
 
         return json;
@@ -78,7 +105,7 @@ const weatherDataService = (() => {
     // Rejects with a time out after 5 seconds
     const createTimeoutPromise = () => {
         return new Promise((_, reject) => {
-            setTimeout(() => reject('Timeout'), 5000);
+            setTimeout(() => reject('timeout'), 5000);
         });
     }
 

@@ -8,14 +8,17 @@ const searchBar = document.getElementById('queryBar')
 queryForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
     const query = new Query(searchBar.value);
+    const apiSubtype = 'current';
 
-    const help = weatherDataService.getWeatherJSON(query.formatQuery());
-    
-    help.then(formattedJson => {
+    const val = weatherDataService.getWeatherJSON(query, apiSubtype, true);
+
+    val.then(formattedJson => {
+        console.log({...formattedJson});
+
         UI.createWeatherRecordPageItem(formattedJson);
     })
     .catch(err => {
-
+        console.log(err);
     })
 })
 

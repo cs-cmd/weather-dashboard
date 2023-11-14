@@ -19,4 +19,8 @@ const weatherSaveLog = (() => {
             }
         }
     }
-})
+
+    return { addLocation, removeLocation };
+})();
+
+export default weatherSaveLog;
