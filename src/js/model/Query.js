@@ -4,6 +4,6 @@ export default class Query {
     };
 
     formatQuery() {
-        return `q=${this.location.replace(' ', '_')}`;
+        return `${encodeURIComponent(this.location)}`;
     };
 }

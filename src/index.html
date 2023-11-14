@@ -4,9 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="./res/dashboard-styles.css">
     <script src="./js/driver.js" type='module' defer></script>
 </head>
 <body>
-    
+    <header>
+        <h1 class="header-title">Weather Dashboard</h1>
+    </header>
+
+    <div class="main-container">
+
+        <aside class="search-and-recent">
+            <div class="search-section">
+                <form method="get" action="#" id='query-form' class="search-form">
+                    <input type="search" name="query" id="queryBar" required class="search-bar">
+                </form>
+            </div>
+            <section class="recent-searches" id="recent-searches">
+                
+            </section>
+        </aside>
+
+        <main class="dashboard">
+
+        </main>
+    </div>
+    <footer>
+        <p class="footer-text">(c) 2023</p>
+    </footer>
 </body>
 </html>

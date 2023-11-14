@@ -4,4 +4,54 @@ html {
 
 body {
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: 0px;
+    padding: 0px;
+}
+
+.header-title {
+    text-align: center;
+}
+
+.main-container {
+    height: 100%;
+    display: flex;
+}
+
+.search-and-recent {
+    background-color: bisque;
+    height: 100%;
+    flex: 1 1 auto;
+    max-width: 350px;
+}
+
+.search-form {
+    display: flex;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 1rem;
+}
+
+.search-bar {
+    width: 80%;
+}
+
+.dashboard {
+    background-color: aqua;
+    height: 100%;
+    flex: 2 2 auto;
+}
+
+
+.footer-text {
+    width: 100%;
+    text-align: center;
+}
+
+
+@media screen and (width < 450px) {
+    .search-and-recent {
+        display: none;
+    }
 }

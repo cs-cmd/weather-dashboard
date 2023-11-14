@@ -1,4 +1,5 @@
 const weatherDataService = (() => {
+    // create Enum-like structure for handling caller type
     const CallerType = Object.freeze({
         Current: 1,
         Forecast: 2,
@@ -7,37 +8,38 @@ const weatherDataService = (() => {
 
     const baseUrl = 'https://api.weatherapi.com/v1';
 
-    const getCurrentJSON = async (query) => {
-        const link = formatLink(query, CallerType.Current);
+    const getWeatherJSON = async (queryArg, callerType = CallerType.Current) => {
+        const [ link, formatter ] = formatLinkAndFormatter(queryArg, callerType);
 
-        fetch(link, {mode:'cors'}).then((e) => {
-            e.json().then((e) => {
-                console.log(e);
-            })
-        })
-    };
+        // error in processing, return
+        if (!formatter) {
+            console.log(`:: Error: formatter function is undefined or null. ::`);
+            return;
+        }
+        
+        return Promise.race( [ fetch(link, {mode: 'cors' }), createTimeoutPromise() ] )
+        .then(response => response.json())
+        .then(json => formatter(json));
+    }
 
-    const getForecastJSON = async (query) => {
-        const link = formatLink(query, CallerType.Forecast);
-    };
-
-    const getAstronomyJSON = async (query) => {
-        const ext = formatLink(query, CallerType.Astronomy);
-    };
-
-    const formatLink = (query, caller) => {
+    // formats the link 
+    const formatLinkAndFormatter = (query, caller) => {
         let ext = '';
+        let formatterFunction = null;
 
         let apiType = '';
         switch(caller) {
             case CallerType.Current:
                 apiType = 'current.json';
+                formatterFunction = formatCurrentWeatherData;
                 break;
             case CallerType.Forecast:
                 apiType = 'forecast.json';
+                formatterFunction = formatForecastData;
                 break;
             case CallerType.Astronomy:
                 apiType = 'astronomy.json';
+                formatterFunction = formatAstronomyData;
                 break;
             default:
                 console.log(`:: Error: no CallerType of type '${caller}'. ::`);
@@ -45,15 +47,43 @@ const weatherDataService = (() => {
         }
 
         let key = '3f2e84dd6a2b4533a01145609231311';
-        ext = `${baseUrl}/${apiType}?key=${key}&${query}`;
+        ext = `${baseUrl}/${apiType}?key=${key}&q=${query}`;
 
-        return ext;
+        return [ ext, formatterFunction ];
+    }
+
+    // formats data for the current day/time
+    const formatCurrentWeatherData = (object) => {
+        const json = {
+            location: object.location.name,
+        };
+
+        return json;
+    }
+
+    // formats astronomical data for use
+    const formatAstronomyData = (object) => {
+        const json = {};
+
+        return json;
+    }
+
+    // formats forecast data
+    const formatForecastData = (object) => {
+        const json = {};
+
+        return json;
+    }
+
+    // Rejects with a time out after 5 seconds
+    const createTimeoutPromise = () => {
+        return new Promise((_, reject) => {
+            setTimeout(() => reject('Timeout'), 5000);
+        });
     }
 
     return {
-        getCurrentJSON,
-        getForecastJSON,
-        getAstronomyJSON,
+        getWeatherJSON,
     }
 })();
 
