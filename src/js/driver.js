@@ -11,11 +11,11 @@ queryForm.addEventListener('submit', (evt) => {
     const apiSubtype = 'current';
 
     const val = weatherDataService.getWeatherJSON(query, apiSubtype, true);
-
     val.then(formattedJson => {
-        console.log({...formattedJson});
 
         UI.createWeatherRecordPageItem(formattedJson);
+
+        UI.loadData(formattedJson);
     })
     .catch(err => {
         console.log(err);

@@ -14,15 +14,13 @@ const weatherDataService = (() => {
         console.log(link);
 
         // return new Promise((resolve, reject) => fetch(link, { mode: 'cors' }))
-        return Promise.race( [ fetch(link, { mode: 'cors' }), createTimeoutPromise() ] )
-        .then(response => {
-            if (response.status !== 200) {
-                throw new Error(response.status);
-            } else {
-                return response.json();
-            }
-        })
+        return Promise.race( [ createTimeoutPromise(), fetch(link, { mode: 'cors' }) ] )
+        .then(response => response.json())
         .then(responseJson => {
+            if(responseJson.error) {
+                throw new Error(`${responseJson.error.code} - ${responseJson.error.message}`);
+            }
+            
             let jsonData = formatter(responseJson);
 
             if(getLocation) {
@@ -31,8 +29,7 @@ const weatherDataService = (() => {
             }
 
             return jsonData;
-        })
-        .catch(err => console.log(err))
+        });
     }
 
     // formats the link 
@@ -102,10 +99,10 @@ const weatherDataService = (() => {
         return json;
     }
 
-    // Rejects with a time out after 5 seconds
+    // Rejects with a time out after 10 seconds
     const createTimeoutPromise = () => {
         return new Promise((_, reject) => {
-            setTimeout(() => reject('timeout'), 5000);
+            setTimeout(() => reject(new Error('Timeout')), 10000);
         });
     }
 

@@ -3,6 +3,10 @@ import weatherSaveLog from '../model/WeatherSaveLog.js';
 const UI = (() => {
     const recentSearchLog = document.getElementById('recent-searches');
 
+    const currrentTempDisplay = document.getElementById('curr-temp');
+    const weatherConditionDisplay = document.getElementById('weather-condition');
+    const feelsLikeTempDisplay = document.getElementById('feels-like-temp');
+
     const createWeatherRecordPageItem = (weatherJson) => {
         const recordJson = {
             name: weatherJson.location.name,
@@ -11,7 +15,7 @@ const UI = (() => {
 
         const recordPageItem = document.createElement('div');
         recordPageItem.classList.add('weather-record');
-        recordPageItem.innerText = weatherRecord.location.name;
+        recordPageItem.innerText = recordJson.name;
         
         const mostRecentSearch = recentSearchLog.firstElementChild;
 
@@ -33,9 +37,15 @@ const UI = (() => {
 
     const loadData = (jsonData) => {
         console.log(jsonData);
+
+        currrentTempDisplay.innerText = jsonData.temp_f;
+        weatherConditionDisplay.innerText = jsonData.condition.text;
+        feelsLikeTempDisplay.innerText = jsonData.feelslike_f;
+
+        
     }
 
-    return { createWeatherRecordPageItem };
+    return { createWeatherRecordPageItem, loadData };
 })();
 
 export default UI;
