@@ -1,3 +1,4 @@
+
 .header-title {
     text-align: center;
 }
@@ -7,7 +8,7 @@
 }
 
 .search-and-recent {
-    flex: 1 1 auto;
+    flex: 1;
     max-width: 350px;
     background-color: aqua;
 }
@@ -34,6 +35,7 @@
 }
 
 .dashboard {
+    flex: 3;
     display: flex;
     flex-direction: column;
     background-color: cadetblue;
@@ -48,18 +50,20 @@
 .current-weather {
     display: flex;
     background-color: aqua;
+    gap: 1rem;
 }
 
 .current-weather-disp {
     background-color: gray;
+    border: 1px solid gray;
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
-    gap: .25rem;
+    gap: 1px;
 }
 
 .current-weather-disp > * {
-    background-color: blue;
+    background-color: aqua;
     padding: 1rem;
     margin: 0px;
 }
@@ -84,4 +88,38 @@
 .location-info {
     grid-column: 2 / 4;
     grid-row: 1 / 4;
+    background-color: gray;
+    flex: 2;
+}
+
+.info-metadata {
+    align-self: center;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 2rem;
+}
+
+.last-updated {
+    margin: 0px;
+}
+
+.refresh-button {
+    cursor: pointer;
+}
+
+
+
+
+
+
+
+
+@media screen and (width < 600px) {
+    html {
+        display: none;
+    }
+    
 }

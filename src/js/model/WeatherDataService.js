@@ -25,7 +25,7 @@ const weatherDataService = (() => {
 
             if(getLocation) {
                 let location = formatLocationData(responseJson.location);
-                jsonData = { location, ...jsonData };
+                jsonData = { location, current: jsonData };
             }
 
             return jsonData;
@@ -65,6 +65,7 @@ const weatherDataService = (() => {
         const { localtime_epoch, ...json } = object; 
         return json;
     }
+    
     // formats data for the current day/time
     const formatCurrentWeatherData = (object) => {
         const currentJson = object.current;

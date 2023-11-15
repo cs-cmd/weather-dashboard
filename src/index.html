@@ -16,8 +16,8 @@
 
         <aside class="search-and-recent">
             <div class="search-section">
-                <form method="get" action="#" id='query-form' class="search-form">
-                    <input type="search" name="query" id="queryBar" required class="search-bar">
+                <form method="get" action="#" id="query-form" class="search-form">
+                    <input title="Enter IP address, city, zipcode (US, UK, CA), or long/lat" type="search" name="query" id="queryBar" required class="search-bar">
                 </form>
             </div>
             <section class="recent-searches" id="recent-searches">
@@ -32,11 +32,18 @@
                     <h3 id="weather-condition" class="weather-condition">Cond.</h3>
                     <h3 id="feels-like-temp" class="feels-like-temp">FL</h3>
                 </div>
-                <div clas="location-info">
-
+                <div class="location-info">
+                    <h1 class="location-name" id="location-name">Test</h1>
+                    <h3 class="location-region" id="location-region">Region</h3>
+                    <h6 class="location-lon-lat" id="location-lon-lat">Long / Lat</h6>
                 </div>
                 <div class="info-metadata">
-
+                    <h6 class="last-updated" id="last-updated">
+                        Last updated
+                    </h6>
+                    <button type="button" class="refresh-button" id="refresh-button">
+                        Refresh
+                    </button>
                 </div>
             </section>
         </main>

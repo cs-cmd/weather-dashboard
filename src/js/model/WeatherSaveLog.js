@@ -1,6 +1,7 @@
 const weatherSaveLog = (() => {
     //
-    const locationRecords = []
+    const locationRecords = [];
+    let lastQuery = '';
 
     const addLocation = (query, link) => {
         const add = {
@@ -20,7 +21,10 @@ const weatherSaveLog = (() => {
         }
     }
 
-    return { addLocation, removeLocation };
+    const getLastQuery = () => lastQuery;
+    const setLastQuery = (last) => ( lastQuery = last );
+
+    return { addLocation, removeLocation, setLastQuery, getLastQuery };
 })();
 
 export default weatherSaveLog;

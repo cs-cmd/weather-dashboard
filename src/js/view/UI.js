@@ -1,21 +1,28 @@
 import weatherSaveLog from '../model/WeatherSaveLog.js';
 
 const UI = (() => {
+
+    // F, C
+    let currentTempUnit = 'F';
+
     const recentSearchLog = document.getElementById('recent-searches');
 
     const currrentTempDisplay = document.getElementById('curr-temp');
     const weatherConditionDisplay = document.getElementById('weather-condition');
     const feelsLikeTempDisplay = document.getElementById('feels-like-temp');
+    
+    const locationNameDisplay = document.getElementById('location-name');
+    const locationRegionDisplay = document.getElementById('location-region');
+    const locationLonLatDisplay = document.getElementById('location-lon-lat');
 
+    const lastUpdatedDisplay = document.getElementById('last-updated');
+    
     const createWeatherRecordPageItem = (weatherJson) => {
-        const recordJson = {
-            name: weatherJson.location.name,
-            
-        };
+        const locationJson = {...weatherJson.location};
 
         const recordPageItem = document.createElement('div');
         recordPageItem.classList.add('weather-record');
-        recordPageItem.innerText = recordJson.name;
+        recordPageItem.innerText = locationJson.name;
         
         const mostRecentSearch = recentSearchLog.firstElementChild;
 
@@ -28,21 +35,48 @@ const UI = (() => {
         const deleteButton = document.createElement('button');
         deleteButton.type = 'button'
         deleteButton.addEventListener('click', () => {
-            weatherSaveLog.removeLocation(recordJson);
+            weatherSaveLog.removeLocation(locationJson);
         });
 
         // add to weather save log object
-        weatherSaveLog.addLocation(recordJson);
+        weatherSaveLog.addLocation(locationJson);
     } 
 
     const loadData = (jsonData) => {
+        const location = jsonData.location;
+        const current = jsonData.current;
+
         console.log(jsonData);
 
-        currrentTempDisplay.innerText = jsonData.temp_f;
-        weatherConditionDisplay.innerText = jsonData.condition.text;
-        feelsLikeTempDisplay.innerText = jsonData.feelslike_f;
-
+        loadTemperature(current.temp_f, current.feelslike_f);
         
+        weatherConditionDisplay.innerText = current.condition.text;
+
+        locationNameDisplay.innerText = location.name;
+
+        let displayRegion = '';
+        if (location.region === '') {
+            displayRegion = location.country;
+        } else {
+            displayRegion = location.region;
+        }
+
+        locationRegionDisplay.innerText = displayRegion;
+
+        let longLatFormatted = `${location.lon}, ${location.lat}`;
+        locationLonLatDisplay.innerText = longLatFormatted;
+        
+        lastUpdatedDisplay.innerText = current.last_updated;
+    }
+
+    function toggleTempUnit() {
+        currentTempUnit = currentTempUnit === 'F' ? 'C' : 'F'; 
+    }
+
+    // I - Imperial
+    function loadTemperature(temp, feelsLike) {
+        currrentTempDisplay.innerText = temp;
+        feelsLikeTempDisplay.innerText = feelsLike;
     }
 
     return { createWeatherRecordPageItem, loadData };
