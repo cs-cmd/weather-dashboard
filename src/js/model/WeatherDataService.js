@@ -1,68 +1,44 @@
 const weatherDataService = (() => {
     const baseUrl = 'https://api.weatherapi.com/v1';
+    const key = '3f2e84dd6a2b4533a01145609231311';
 
-    const getWeatherJSON = async (query, apiSubtype, getLocation = false) => {
-        const link = formatLink(query, apiSubtype);
-        const formatter = resolveFormatter(apiSubtype);
+    const getWeatherJSON = async (query) => {
+        const queryValue = query.formatQuery();
+        const currDate = new Date();
+        const formattedDate = `${currDate.getFullYear()}-${currDate.getMonth()}-${currDate.getDay()}`;
+
+        const forecastLink = `${baseUrl}/forecast.json?key=${key}&q=${queryValue}&days=3&alerts=yes`;
+        const astronomyLink = `${baseUrl}/astronomy.json?key=${key}&q=${queryValue}&dt=${formattedDate}`;
         
-        // error in processing, return
-        if (!formatter) {
-            console.log(`:: Error: formatter function is undefined or null. ::`);
-            return;
-        }
-
-        console.log(link);
-
         // return new Promise((resolve, reject) => fetch(link, { mode: 'cors' }))
-        return Promise.race( [ createTimeoutPromise(), fetch(link, { mode: 'cors' }) ] )
-        .then(response => response.json())
+        return Promise.race( [ createTimeoutPromise(), 
+            //fetch(link, { mode: 'cors' }) 
+            Promise.all( [fetch(forecastLink, { mode: 'cors' }),
+                          fetch(astronomyLink, { mode: 'cors' })  ])
+    ] )
+        .then(response => {
+            return Promise.all([ response[0].json(),
+                                response[1].json()]);
+        })
         .then(responseJson => {
-            if(responseJson.error) {
-                throw new Error(`${responseJson.error.code} - ${responseJson.error.message}`);
-            }
-            
-            let jsonData = formatter(responseJson);
+            const weatherJson = {
+                location: formatLocationData(responseJson[0]),
+                current: formatCurrentWeatherData(responseJson[0]),
+                forecast: formatForecastData(responseJson[0]),
+                astronomy: formatAstronomyData(responseJson[1]),
+            };
 
-            if(getLocation) {
-                let location = formatLocationData(responseJson.location);
-                jsonData = { location, current: jsonData };
-            }
+            return weatherJson;
 
-            return jsonData;
+            // format location
+            // format current
+            // format astronomy
+            // format forecase
         });
     }
 
-    // formats the link 
-    const formatLink = (query, caller) => {
-        let ext = '';
-
-        let key = '3f2e84dd6a2b4533a01145609231311';
-        ext = `${baseUrl}/${caller}.json?key=${key}&q=${query.formatQuery()}`;
-
-        return ext;
-    }
-
-    const resolveFormatter = (apiSubtype) => {
-        let formatterFunction = null;
-        switch(apiSubtype) {
-            case 'current':     
-                formatterFunction = formatCurrentWeatherData;
-                break;
-            case 'forecast':
-                formatterFunction = formatForecastData;
-                break;
-            case 'astronomy':
-                formatterFunction = formatAstronomyData;
-                break;
-            default:
-                console.log(`:: Error: no valid subtype of type '${apiSubtype}'. ::`);
-                return;
-        }
-        return formatterFunction;
-    }
-
     const formatLocationData = (object) => {
-        const { localtime_epoch, ...json } = object; 
+        const { localtime_epoch, ...json } = object.location; 
         return json;
     }
     
@@ -86,7 +62,9 @@ const weatherDataService = (() => {
     const formatAstronomyData = (object) => {
         const astronomyJson = object.astronomy;
 
-        const json = {};
+        const json = {
+            ...astronomyJson,
+        };
 
         return json;
     }
@@ -95,7 +73,12 @@ const weatherDataService = (() => {
     const formatForecastData = (object) => {
         const forecastJson = object.forecast;
 
-        const json = {};
+        // find index of next hour
+        // get forecast days for today's date for that hour only, then
+
+        const json = {
+            ...forecastJson,
+        };
 
         return json;
     }
@@ -103,7 +86,7 @@ const weatherDataService = (() => {
     // Rejects with a time out after 10 seconds
     const createTimeoutPromise = () => {
         return new Promise((_, reject) => {
-            setTimeout(() => reject(new Error('Timeout')), 10000);
+            setTimeout(() => reject(new Error('Timeout')),10000);
         });
     }
 

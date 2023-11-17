@@ -16,7 +16,7 @@ const UI = (() => {
     const locationLonLatDisplay = document.getElementById('location-lon-lat');
 
     const lastUpdatedDisplay = document.getElementById('last-updated');
-    
+
     const createWeatherRecordPageItem = (weatherJson) => {
         const locationJson = {...weatherJson.location};
 
@@ -45,9 +45,10 @@ const UI = (() => {
     const loadData = (jsonData) => {
         const location = jsonData.location;
         const current = jsonData.current;
+        const astronomy = jsonData.astronomy;
+        const forecastDays = jsonData.forecast.forecastday;
 
-        console.log(jsonData);
-
+        // load location and current temperature
         loadTemperature(current.temp_f, current.feelslike_f);
         
         weatherConditionDisplay.innerText = current.condition.text;
@@ -67,6 +68,14 @@ const UI = (() => {
         locationLonLatDisplay.innerText = longLatFormatted;
         
         lastUpdatedDisplay.innerText = current.last_updated;
+
+        // load forecast data
+        const forecastCards = document.querySelectorAll('section.forecast > .forecast-card');
+
+        for(let i = 0; i < forecastDays.length && i < forecastCards.length; ++i) {
+            loadForecast(forecastDays[i], forecastCards[i]);
+        }
+
     }
 
     function toggleTempUnit() {
@@ -78,6 +87,42 @@ const UI = (() => {
         currrentTempDisplay.innerText = temp;
         feelsLikeTempDisplay.innerText = feelsLike;
     }
+
+    function loadForecast(day, pageItem) {
+        const dayTitle = pageItem.querySelector('.day-date');
+        dayTitle.innerText = day.date;
+
+        console.log(pageItem);
+        pageItem.addEventListener('click', () => {
+            loadForecastDayData(day);
+        })
+    }
+
+    function loadForecastDayData(forecastDayJson) {
+        if (!forecastDayJson) {
+            return;
+        }
+
+        const forecastDrilldown = document.querySelector('.forecast-drilldown');
+
+        if (forecastDrilldown.children.length !== 0) {
+            Array.from(forecastDrilldown.children).forEach(e => e.remove());
+        }        
+
+        const forecastDay = forecastDayJson.date;
+        const forecastHours = forecastDayJson.hour;
+
+        for(let i = 0; i < forecastHours.length; ++i) {
+            const hourDiv = createForecastHourCard(forecastHours[i]);
+            forecastDrilldown.appendChild(hourDiv);
+        }
+    }
+
+    function createForecastHourCard(forecastHourJson) {
+        const hourDiv = document.createElement('div');
+        hourDiv.innerText = forecastHourJson.time;
+        return hourDiv;
+    } 
 
     return { createWeatherRecordPageItem, loadData };
 })();

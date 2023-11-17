@@ -1,3 +1,9 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
 
 .header-title {
     text-align: center;
@@ -5,6 +11,7 @@
 
 .main-container {
     display: flex;
+    width: min(95%, 1000px);
 }
 
 .search-and-recent {
@@ -57,9 +64,10 @@
     background-color: gray;
     border: 1px solid gray;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
     grid-template-rows: 1fr 1fr;
     gap: 1px;
+    flex: 2;
 }
 
 .current-weather-disp > * {
@@ -89,7 +97,7 @@
     grid-column: 2 / 4;
     grid-row: 1 / 4;
     background-color: gray;
-    flex: 2;
+    flex: 3;
 }
 
 .info-metadata {
@@ -100,6 +108,7 @@
     height: 100%;
     box-sizing: border-box;
     padding: 2rem;
+    flex: 1;
 }
 
 .last-updated {
@@ -110,6 +119,30 @@
     cursor: pointer;
 }
 
+
+
+/* <section class="forecast">
+<div class="forecast-card">
+    <h1>Day 1</h1>
+</div>
+<div class="forecast-card">
+    <h1>Day 2</h1>
+</div>
+<div class="forecast-card">
+    <h1>Day 3</h1>
+</div>
+</section> */
+
+.forecast {
+    display: flex;
+    justify-content:space-evenly;
+    box-sizing: border-box;
+}
+
+.forecast-card {
+    border: 1px solid black;
+    cursor: pointer;
+}
 
 
 

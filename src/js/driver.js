@@ -10,10 +10,10 @@ const refreshButton = document.getElementById('refresh-button');
 
 queryForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
-    const query = new Query(searchBar.value);
-    const apiSubtype = 'current';
 
-    runApiCall(query, apiSubtype);
+    const query = new Query(searchBar.value);
+
+    runApiCall(query);
 });
 
 refreshButton.addEventListener('click', () => {
@@ -23,24 +23,14 @@ refreshButton.addEventListener('click', () => {
         return;
     }
 
-    runApiCall(lastQuery, 'current', false);
+    runApiCall(lastQuery);
 });
 
-
-function runApiCall(query, apiSubtype, isFresh = true) {
-    const val = weatherDataService.getWeatherJSON(query, apiSubtype, true);
-    val.then(formattedJson => {
-
-        if(isFresh) {
-            UI.createWeatherRecordPageItem(formattedJson);
-        }
-
-        UI.loadData(formattedJson);
-
-        weatherSaveLog.setLastQuery(query);
-    })
-    .catch(err => {
-        console.log(err);
-    });
+function runApiCall(query) {
+    const weatherJson = weatherDataService.getWeatherJSON(query);
+    
+    weatherJson.then(weatherJson => {
+        UI.loadData(weatherJson);
+    }).catch(err => console.log(err));
 }
 
