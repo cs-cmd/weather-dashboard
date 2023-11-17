@@ -5,8 +5,15 @@ body {
     justify-content: space-between;
 }
 
-.header-title {
+.header {
     text-align: center;
+    margin-bottom: 1rem;
+}
+
+.search-bar {
+    text-align: center;
+    border: none;
+    border-bottom: 1px solid black;
 }
 
 .main-container {
@@ -14,50 +21,18 @@ body {
     width: min(95%, 1000px);
 }
 
-.search-and-recent {
-    flex: 1;
-    max-width: 350px;
-    background-color: aqua;
-}
-
-.search-form {
-    display: flex;
-    justify-content: center;
-    box-sizing: border-box;
-    padding: 1rem;
-}
-
-.search-bar {
-    width: 80%;
-    border: none;
-    border-radius: .125rem;
-}
-
-.recent-searches {
-    display: flex;
-    gap: 1rem;
-    flex-direction: column;
-    align-items: center;
-    font-size: 1.25rem;
-}
-
 .dashboard {
-    flex: 3;
     display: flex;
     flex-direction: column;
     background-color: cadetblue;
+    flex-shrink: 1;
+    width: 100%;
+    max-width: 1000px;
 }
-
-/* .current-weather {
-    display: grid;
-    grid-template-columns: repeat(1fr, 4);
-    grid-template-rows: 1fr .5fr .5fr;
-} */
 
 .current-weather {
     display: flex;
     background-color: aqua;
-    gap: 1rem;
 }
 
 .current-weather-disp {
@@ -67,7 +42,7 @@ body {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: 1fr 1fr;
     gap: 1px;
-    flex: 2;
+    flex: 20%;
 }
 
 .current-weather-disp > * {
@@ -97,7 +72,7 @@ body {
     grid-column: 2 / 4;
     grid-row: 1 / 4;
     background-color: gray;
-    flex: 3;
+    flex: 70%;
 }
 
 .info-metadata {
@@ -108,7 +83,7 @@ body {
     height: 100%;
     box-sizing: border-box;
     padding: 2rem;
-    flex: 1;
+    flex: 10%;
 }
 
 .last-updated {
@@ -118,20 +93,6 @@ body {
 .refresh-button {
     cursor: pointer;
 }
-
-
-
-/* <section class="forecast">
-<div class="forecast-card">
-    <h1>Day 1</h1>
-</div>
-<div class="forecast-card">
-    <h1>Day 2</h1>
-</div>
-<div class="forecast-card">
-    <h1>Day 3</h1>
-</div>
-</section> */
 
 .forecast {
     display: flex;
@@ -143,6 +104,32 @@ body {
     border: 1px solid black;
     cursor: pointer;
 }
+
+.forecast-drilldown {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 1ch;
+    overflow: scroll;
+    box-sizing: border-box;
+    padding: 0px;
+    height: 0px;
+    transition: height .5s,
+        padding .5s;
+}
+
+.forecast-drilldown.dropped {
+    height: 150px;
+    padding: 5px;
+}
+
+.forecast-hour {
+    border: 1px solid black;
+    width: 150px;
+    aspect-ratio: 1/1;
+    flex-shrink: 0;
+}
+
 
 
 

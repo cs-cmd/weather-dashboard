@@ -1,7 +1,6 @@
 import weatherSaveLog from '../model/WeatherSaveLog.js';
 
 const UI = (() => {
-
     // F, C
     let currentTempUnit = 'F';
 
@@ -42,14 +41,24 @@ const UI = (() => {
         weatherSaveLog.addLocation(locationJson);
     } 
 
+    const resetUIElements = () => {
+        const forecastDrilldown = document.querySelector('.forecast-drilldown');
+        forecastDrilldown.classList.remove('dropped');
+    }
+
     const loadData = (jsonData) => {
+        weatherSaveLog.setLastQueryResults(jsonData);
         const location = jsonData.location;
         const current = jsonData.current;
         const astronomy = jsonData.astronomy;
         const forecastDays = jsonData.forecast.forecastday;
 
+        resetUIElements();
+
         // load location and current temperature
-        loadTemperature(current.temp_f, current.feelslike_f);
+        loadTemperature({ 
+            temp: current.temp_f, 
+            feelslike: current.feelslike_f });
         
         weatherConditionDisplay.innerText = current.condition.text;
 
@@ -71,7 +80,7 @@ const UI = (() => {
 
         // load forecast data
         const forecastCards = document.querySelectorAll('section.forecast > .forecast-card');
-
+        console.log(forecastCards);
         for(let i = 0; i < forecastDays.length && i < forecastCards.length; ++i) {
             loadForecast(forecastDays[i], forecastCards[i]);
         }
@@ -79,27 +88,56 @@ const UI = (() => {
     }
 
     function toggleTempUnit() {
-        currentTempUnit = currentTempUnit === 'F' ? 'C' : 'F'; 
+        if (!weatherSaveLog.getLastQueryResults()) {
+            return;
+        }
+
+        const currentJson = weatherSaveLog.getLastQueryResults();
+
+        weatherSaveLog.toggleCurrentUnit();
+        const newUnit = weatherSaveLog.getCurrentUnit();
+
+        let temps = {};
+        switch(newUnit) {
+            case 'C': 
+                temps = {
+                    temp: currentJson.temp_c,
+                    feelslike: currentJson.feelslike_c,
+                };
+                break;
+            case 'F': 
+                temps = {
+                    temp: currentJson.temp_f,
+                    feelslike: currentJson.feelslike_f,
+                }
+                break;
+            default:
+                console.log(`:: Error: weather type: ${newUnit} is invalid. ::`);
+                return;
+        }
+        loadTemperature(temps);
     }
 
-    // I - Imperial
-    function loadTemperature(temp, feelsLike) {
-        currrentTempDisplay.innerText = temp;
-        feelsLikeTempDisplay.innerText = feelsLike;
+    function loadTemperature(temps) {
+        currrentTempDisplay.innerText = temps.temp;
+        feelsLikeTempDisplay.innerText = temps.feelslike;
     }
 
     function loadForecast(day, pageItem) {
         const dayTitle = pageItem.querySelector('.day-date');
         dayTitle.innerText = day.date;
+        console.log('addig onclick');
 
-        console.log(pageItem);
         pageItem.addEventListener('click', () => {
             loadForecastDayData(day);
         })
     }
 
     function loadForecastDayData(forecastDayJson) {
+        resetUIElements();
+
         if (!forecastDayJson) {
+            console.log('json null');
             return;
         }
 
@@ -109,18 +147,24 @@ const UI = (() => {
             Array.from(forecastDrilldown.children).forEach(e => e.remove());
         }        
 
-        const forecastDay = forecastDayJson.date;
         const forecastHours = forecastDayJson.hour;
 
         for(let i = 0; i < forecastHours.length; ++i) {
             const hourDiv = createForecastHourCard(forecastHours[i]);
+
             forecastDrilldown.appendChild(hourDiv);
         }
+
+        forecastDrilldown.classList.add('dropped');
+        // scrolls to left-most spot on scrollbar
+        forecastDrilldown.scrollTo(0, 0);
     }
 
     function createForecastHourCard(forecastHourJson) {
         const hourDiv = document.createElement('div');
         hourDiv.innerText = forecastHourJson.time;
+        hourDiv.classList.add('forecast-hour');
+
         return hourDiv;
     } 
 

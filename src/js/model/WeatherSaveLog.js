@@ -2,6 +2,8 @@ const weatherSaveLog = (() => {
     //
     const locationRecords = [];
     let lastQuery = '';
+    let lastQueryResults = null;
+    let currentTempUnit = 'F';
 
     const addLocation = (query, link) => {
         const add = {
@@ -22,9 +24,22 @@ const weatherSaveLog = (() => {
     }
 
     const getLastQuery = () => lastQuery;
-    const setLastQuery = (last) => ( lastQuery = last );
+    const setLastQuery = (last) => { lastQuery = last };
+    const getLastQueryResults = () => lastQueryResults;
+    const setLastQueryResults = (results) => { lastQueryResults = results; };
+    const getCurrentUnit = () => currentTempUnit;
+    const toggleCurrentUnit = () => { currentTempUnit = (currentTempUnit === 'F' ? 'C' : 'F'); }
 
-    return { addLocation, removeLocation, setLastQuery, getLastQuery };
+
+    return { addLocation, 
+        removeLocation, 
+        setLastQuery, 
+        getLastQuery, 
+        setLastQueryResults, 
+        getLastQueryResults,
+        getCurrentUnit,
+        toggleCurrentUnit,
+    };
 })();
 
 export default weatherSaveLog;
