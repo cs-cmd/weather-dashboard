@@ -19,9 +19,22 @@
         <main class="dashboard">
             <section class="current-weather">
                 <div class="current-weather-disp">
-                    <h1 id="curr-temp" class="curr-temp">50Deg</h1>
-                    <h3 id="weather-condition" class="weather-condition">Cond.</h3>
-                    <h3 id="feels-like-temp" class="feels-like-temp">FL</h3>
+                    <h1 class="curr-temp">
+                        <span id="curr-temp">--
+                        </span>
+                        &deg;
+                        <span id="curr-temp-symbol">-</span>
+                    </h1>
+                    <h3 id="weather-condition" class="weather-condition">----</h3>
+                    <div class="feels-like-pane">
+                        <h5 class="feels-like-header">Feels like:</h5>
+                        <h5 class="feels-like-container">
+                            <span id="feels-like-temp" class="feels-like-temp">--</span>
+                            &deg;
+                            <span id="feels-like-symbol">-</span>
+                        </h5>
+                    </div>
+                    
                 </div>
                 <div class="location-info">
                     <h1 class="location-name" id="location-name">Test</h1>
@@ -39,14 +52,14 @@
             </section>
 
             <section class="forecast" id="forecast-container">
-                <button class="forecast-card">
-                    <h1 class="day-date">Day 1</h1>
+                <button class="forecast-button">
+                    <h1 class="day-date">----</h1>
                 </button>
-                <button class="forecast-card">
-                    <h1 class="day-date">Day 1</h1>
+                <button class="forecast-button">
+                    <h1 class="day-date">----</h1>
                 </button>
-                <button class="forecast-card">
-                    <h1 class="day-date">Day 1</h1>
+                <button class="forecast-button">
+                    <h1 class="day-date">----</h1>
                 </button>
             </section>
 

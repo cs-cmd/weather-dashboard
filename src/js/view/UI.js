@@ -9,7 +9,10 @@ const UI = (() => {
     const currrentTempDisplay = document.getElementById('curr-temp');
     const weatherConditionDisplay = document.getElementById('weather-condition');
     const feelsLikeTempDisplay = document.getElementById('feels-like-temp');
-    
+    const currentTempSymbol = document.getElementById('curr-temp-symbol');
+    const feelsLikeSymbol = document.getElementById('feels-like-symbol');
+
+
     const locationNameDisplay = document.getElementById('location-name');
     const locationRegionDisplay = document.getElementById('location-region');
     const locationLonLatDisplay = document.getElementById('location-lon-lat');
@@ -58,7 +61,9 @@ const UI = (() => {
         // load location and current temperature
         loadTemperature({ 
             temp: current.temp_f, 
-            feelslike: current.feelslike_f });
+            feelslike: current.feelslike_f,
+            unit: 'F',
+        });
         
         weatherConditionDisplay.innerText = current.condition.text;
 
@@ -79,7 +84,7 @@ const UI = (() => {
         lastUpdatedDisplay.innerText = current.last_updated;
 
         // load forecast data
-        const forecastCards = document.querySelectorAll('section.forecast > .forecast-card');
+        const forecastCards = document.querySelectorAll('section.forecast > .forecast-button');
         console.log(forecastCards);
         for(let i = 0; i < forecastDays.length && i < forecastCards.length; ++i) {
             loadForecast(forecastDays[i], forecastCards[i]);
@@ -115,12 +120,20 @@ const UI = (() => {
                 console.log(`:: Error: weather type: ${newUnit} is invalid. ::`);
                 return;
         }
+
+        temps = {
+            unit: newUnit,
+            ...temps,
+        }
+
         loadTemperature(temps);
     }
 
     function loadTemperature(temps) {
         currrentTempDisplay.innerText = temps.temp;
         feelsLikeTempDisplay.innerText = temps.feelslike;
+        currentTempSymbol.innerText = temps.unit;
+        feelsLikeSymbol.innerText = temps.unit;
     }
 
     function loadForecast(day, pageItem) {
