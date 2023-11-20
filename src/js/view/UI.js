@@ -12,6 +12,7 @@ const UI = (() => {
     const currentTempSymbol = document.getElementById('curr-temp-symbol');
     const feelsLikeSymbol = document.getElementById('feels-like-symbol');
 
+    const loadingIcon = document.getElementById('loading-icon');
 
     const locationNameDisplay = document.getElementById('location-name');
     const locationRegionDisplay = document.getElementById('location-region');
@@ -85,7 +86,7 @@ const UI = (() => {
 
         // load forecast data
         const forecastCards = document.querySelectorAll('section.forecast > .forecast-button');
-        console.log(forecastCards);
+        
         for(let i = 0; i < forecastDays.length && i < forecastCards.length; ++i) {
             loadForecast(forecastDays[i], forecastCards[i]);
         }
@@ -139,7 +140,6 @@ const UI = (() => {
     function loadForecast(day, pageItem) {
         const dayTitle = pageItem.querySelector('.day-date');
         dayTitle.innerText = day.date;
-        console.log('addig onclick');
 
         pageItem.addEventListener('click', () => {
             loadForecastDayData(day);
@@ -150,7 +150,7 @@ const UI = (() => {
         resetUIElements();
 
         if (!forecastDayJson) {
-            console.log('json null');
+            console.log(':: Error: forecastDayJson is null; returning, ::');
             return;
         }
 
@@ -181,7 +181,11 @@ const UI = (() => {
         return hourDiv;
     } 
 
-    return { createWeatherRecordPageItem, loadData };
+    function toggleLoading() {
+        loadingIcon.classList.toggle('is-running');
+    }
+
+    return { createWeatherRecordPageItem, loadData, toggleLoading };
 })();
 
 export default UI;

@@ -13,13 +13,29 @@ body {
 
 .header {
     text-align: center;
-    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem;
 }
 
 .search-bar {
     text-align: center;
     border: none;
     border-bottom: 1px solid black;
+}
+
+.loading {
+    opacity: 0;
+    aspect-ratio: 1 / 1;
+    width: 2rem;
+    transition: opacity .1s;
+}
+
+.loading.is-running {
+    opacity: 1;
 }
 
 .main-container {

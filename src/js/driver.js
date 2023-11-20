@@ -29,8 +29,15 @@ refreshButton.addEventListener('click', () => {
 function runApiCall(query) {
     const weatherJson = weatherDataService.getWeatherJSON(query);
     
+    UI.toggleLoading();
+
     weatherJson.then(weatherJson => {
         UI.loadData(weatherJson);
-    }).catch(err => console.log(err));
+    }).catch(err => console.log(err))
+    .finally(() => {
+        UI.toggleLoading();
+    });
+
+
 }
 

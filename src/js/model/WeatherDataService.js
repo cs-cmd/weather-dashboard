@@ -17,6 +17,12 @@ const weatherDataService = (() => {
                           fetch(astronomyLink, { mode: 'cors' })  ])
     ] )
         .then(response => {
+            const responseCode = response[0].status;
+
+            if(responseCode !== 200) {
+                throw new Error(`Error: ${responseCode}`);
+            }
+
             return Promise.all([ response[0].json(),
                                 response[1].json()]);
         })
