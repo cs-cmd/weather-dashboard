@@ -1,14 +1,25 @@
 :root {
-    --main-background: #e9e9e9;
-    --element-background: #B7BFBC;
+    --element-background: #B7BFBC90;
     --current-weather-display-background: #D5C7CE;
+    --gradient-color-primary: #62e5fb;
+    --gradient-color-secondary: #FB7962;
+    --accent-color:#FB7962;
+    --main-background: linear-gradient(var(--gradient-color-primary), var(--gradient-color-secondary));
 }
+
+html {
+    min-height: 100dvh;
+    background-image: var(--main-background);
+    font-family: sans-serif;
+    user-select: none;
+}
+
 body {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    background-color: var(--main-background);
+       /* filter: blur(10px); */
 }
 
 .header {
@@ -25,6 +36,8 @@ body {
     text-align: center;
     border: none;
     border-bottom: 1px solid black;
+    font-size: 1.25rem;
+    background: none;
 }
 
 .loading {
@@ -59,46 +72,38 @@ body {
 }
 
 .current-weather-disp {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: 1fr 1fr;
-    flex: 20%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 1rem;
+    flex: 0 0 20%;
     gap: 1px;
-    background-color: var(--current-weather-display-background);
+}
+.current-weather-disp > *,
+ {
+    border-bottom: 1px solid black;
 }
 
-.current-weather-disp > * {
-    margin: 0px;
-
-}
 
 .curr-temp, 
-.weather-condition,
-.feels-like-temp {
+.weather-condition {
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.curr-temp {
-    grid-column: 1 / 3;
-    grid-row: 1 / 2;
-
+    margin: 0px;
 }
 
 .weather-condition {
-    grid-column: 1 / 2;
-    grid-row: 2 / 3;
+    text-align: center;
 }
 
 .feels-like-header {
     padding: 0px;
     margin: 0px;
 }
-.feels-like-pane {
-    grid-column: 2 / 3;
-    grid-row: 2 / 3;
-}
+
 
 .feels-like-container {
     margin: 0px;
@@ -109,8 +114,6 @@ body {
 
 
 .location-info {
-    grid-column: 2 / 4;
-    grid-row: 1 / 4;
     flex: 70%;
     box-sizing: border-box;
     padding: 0px 1rem;
@@ -129,24 +132,33 @@ body {
 
 .last-updated {
     margin: 0px;
+    text-align: center;
 }
 
-.refresh-button {
+.toggle-unit-button {
     cursor: pointer;
+    border: none;
+    transition: background-color .25s;
+}
+
+.toggle-unit-button:hover {
+    background-color: var(--accent-color);
 }
 
 .forecast {
     display: flex;
     justify-content:space-evenly;
     box-sizing: border-box;
-    padding: .25rem;
     gap: .25rem;
 }
 
 .forecast-button {
-    border: 1px solid black;
+    margin: 1rem 0px;
+    border: none;
+    border-radius: 1rem;
     cursor: pointer;
     flex: 1;
+    transition: background-color .25s;
 }
 
 .forecast-drilldown {
@@ -172,6 +184,15 @@ body {
     width: 150px;
     aspect-ratio: 1/1;
     flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.selected-button {
+    background-color: var(--accent-color);
 }
 
 

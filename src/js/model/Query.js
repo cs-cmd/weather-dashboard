@@ -3,6 +3,7 @@ export default class Query {
         this.location = location;
     }
 
+    // formats query argument
     formatQuery() {
         return `${encodeURIComponent(this.location)}`;
     }

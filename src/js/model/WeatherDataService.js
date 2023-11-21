@@ -5,53 +5,51 @@ const weatherDataService = (() => {
     const getWeatherJSON = async (query) => {
         const queryValue = query.formatQuery();
         const currDate = new Date();
+
+        // format date for astronomy link
         const formattedDate = `${currDate.getFullYear()}-${currDate.getMonth()}-${currDate.getDay()}`;
 
         const forecastLink = `${baseUrl}/forecast.json?key=${key}&q=${queryValue}&days=3&alerts=yes`;
         const astronomyLink = `${baseUrl}/astronomy.json?key=${key}&q=${queryValue}&dt=${formattedDate}`;
         
-        // return new Promise((resolve, reject) => fetch(link, { mode: 'cors' }))
+        // retrieve either 
         return Promise.race( [ createTimeoutPromise(), 
-            //fetch(link, { mode: 'cors' }) 
             Promise.all( [fetch(forecastLink, { mode: 'cors' }),
                           fetch(astronomyLink, { mode: 'cors' })  ])
     ] )
         .then(response => {
             const responseCode = response[0].status;
 
+            // if response code is anything other than success, throw new error
             if(responseCode !== 200) {
                 throw new Error(`Error: ${responseCode}`);
             }
 
+            // return json-ified response
             return Promise.all([ response[0].json(),
                                 response[1].json()]);
         })
         .then(responseJson => {
+            // full JSON of weather data
             const weatherJson = {
-                location: formatLocationData(responseJson[0]),
-                current: formatCurrentWeatherData(responseJson[0]),
-                forecast: formatForecastData(responseJson[0]),
-                astronomy: formatAstronomyData(responseJson[1]),
+                location: formatLocationData(responseJson[0].location),
+                current: formatCurrentWeatherData(responseJson[0].current),
+                forecast: formatForecastData(responseJson[0].forecast),
+                astronomy: formatAstronomyData(responseJson[1].astronomy),
             };
 
             return weatherJson;
-
-            // format location
-            // format current
-            // format astronomy
-            // format forecase
         });
     }
 
-    const formatLocationData = (object) => {
-        const { localtime_epoch, ...json } = object.location; 
+    // format location data, excluding localtime_epoch item
+    const formatLocationData = (locationJson) => {
+        const { localtime_epoch, ...json } = locationJson; 
         return json;
     }
     
     // formats data for the current day/time
-    const formatCurrentWeatherData = (object) => {
-        const currentJson = object.current;
-
+    const formatCurrentWeatherData = (currentJson) => {
         const json = {
             last_updated: currentJson.last_updated,
             temp_c: currentJson.temp_c,
@@ -65,9 +63,7 @@ const weatherDataService = (() => {
     }
 
     // formats astronomical data for use
-    const formatAstronomyData = (object) => {
-        const astronomyJson = object.astronomy;
-
+    const formatAstronomyData = (astronomyJson) => {
         const json = {
             ...astronomyJson,
         };
@@ -76,12 +72,7 @@ const weatherDataService = (() => {
     }
 
     // formats forecast data
-    const formatForecastData = (object) => {
-        const forecastJson = object.forecast;
-
-        // find index of next hour
-        // get forecast days for today's date for that hour only, then
-
+    const formatForecastData = (forecastJson) => {
         const json = {
             ...forecastJson,
         };
@@ -92,7 +83,7 @@ const weatherDataService = (() => {
     // Rejects with a time out after 10 seconds
     const createTimeoutPromise = () => {
         return new Promise((_, reject) => {
-            setTimeout(() => reject(new Error('Timeout')),10000);
+            setTimeout(() => reject(new Error('Timeout')), 10000);
         });
     }
 

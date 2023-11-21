@@ -1,11 +1,10 @@
 import weatherDataService from './model/WeatherDataService.js';
 import Query from './model/Query.js';
 import UI from './view/UI.js';
-import weatherSaveLog from './model/WeatherSaveLog.js';
 
 const queryForm = document.getElementById('query-form');
 const searchBar = document.getElementById('queryBar');
-const refreshButton = document.getElementById('refresh-button');
+const toggleUnitButton = document.getElementById('toggle-unit-button');
 
 
 queryForm.addEventListener('submit', (evt) => {
@@ -16,14 +15,8 @@ queryForm.addEventListener('submit', (evt) => {
     runApiCall(query);
 });
 
-refreshButton.addEventListener('click', () => {
-    const lastQuery = weatherSaveLog.getLastQuery();
-
-    if (lastQuery === '') {
-        return;
-    }
-
-    runApiCall(lastQuery);
+toggleUnitButton.addEventListener('click', () => {
+    UI.toggleTempUnit();
 });
 
 function runApiCall(query) {
